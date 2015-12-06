@@ -1,0 +1,20 @@
+{
+  "name": "blog",
+  "version": "0.0.0",
+  "homepage": "https://github.com/zhufengnodejs/node201507",
+  "authors": [
+    "huanglirui"
+  ],
+  "description": "blog",
+  "keywords": [
+    "blog"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

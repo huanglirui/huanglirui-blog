@@ -12,8 +12,9 @@ var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
 var flash = require('connect-flash');
 var app = express();
+var fs = require('fs');
 
-// view engine setup
+// 视图模板和模板路径
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
@@ -31,7 +32,7 @@ app.use(session({
         port:settings.port
     })
 }));
-
+//基于session的零时存储，取了之后就销毁
 app.use(flash());
 
 app.use(function(req,res,next){
@@ -42,9 +43,14 @@ app.use(function(req,res,next){
     next();
 });
 
-// uncomment after placing your favicon in /public
+// favicon.ico地址
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
+
+//输出日志
+var accessLog = fs.createWriteStream('access.log', {flags: 'a'});
+var errorLog = fs.createWriteStream('error.log', {flags: 'a'});
+app.use(logger('dev', {stream: accessLog}));
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -54,7 +60,7 @@ app.use('/', routes);
 app.use('/user', users);
 app.use('/article', articles);
 
-// catch 404 and forward to error handler
+// 捕获404页面
 app.use(function(req, res, next) {
     res.render('404', {
         title: 'error page'
@@ -62,9 +68,13 @@ app.use(function(req, res, next) {
 });
 
 // error handlers
+app.use(function (err, req, res, next) {
+  var meta = '[' + new Date() + ']' + req.url + '\n';
+  errorLog.write(meta + err.stack + '\n');
+  next();
+});
 
-// development error handler
-// will print stacktrace
+//开发环境，输出错误日志到页面
 if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) {
     res.status(err.status || 500);

@@ -2,3 +2,4 @@ node_modules
 .idea
 .bowerrc
 lib
+npm-debug.log
